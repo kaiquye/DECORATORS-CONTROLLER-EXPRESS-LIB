@@ -101,15 +101,15 @@ const Get = (name?: string): Function => {
   };
 };
 
-const ValidateDto = (dto: DtoBase) => {
+const ValidateDto = (dto: any) => {
   return (target: ControllerBase, key: string): void => {
     if (target._middlewaresDto?.push !== undefined) {
       target._middlewaresDto.push({
         toFunction: key,
-        dtoValidation: [DtoBase],
+        dtoValidation: [dto],
       });
     } else {
-      target._middlewaresDto = [{ toFunction: key, dtoValidation: [DtoBase] }];
+      target._middlewaresDto = [{ toFunction: key, dtoValidation: [dto] }];
     }
   };
 };
