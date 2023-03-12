@@ -67,5 +67,28 @@ const Post = (name?: string): Function => {
     }
   };
 };
+const Get = (name?: string): Function => {
+  const nameRouter = name === undefined ? "/" : name;
+  return (target: ControllerBase, key: string): void => {
+    const _value = target[key];
+    if (target._routers?.push !== undefined) {
+      target._routers.push({
+        status: TypesMethodsRouter._get,
+        toFunction: key,
+        nameRouter,
+        func: _value,
+      });
+    } else {
+      target._routers = [
+        {
+          status: TypesMethodsRouter._get,
+          toFunction: key,
+          nameRouter,
+          func: _value,
+        },
+      ];
+    }
+  };
+};
 
 export { ControllerBase, Controller };
