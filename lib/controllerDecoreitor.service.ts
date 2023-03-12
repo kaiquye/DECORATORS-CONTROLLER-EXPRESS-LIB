@@ -1,6 +1,6 @@
 import { Express } from "express";
 import { GlobalError } from "./globalError.error";
-import {DtoBase} from "./validationObjectTransfer.service";
+import { DtoBase } from "./validationObjectTransfer.service";
 
 interface InterfaceControllerConfig {
   // instance of express
@@ -92,7 +92,14 @@ const Get = (name?: string): Function => {
   };
 };
 
-
-export const DtoValidation(DtoBase)
+const validateDto = (dto: DtoBase) => {
+  return (target: ControllerBase, key: string): void => {
+    if (target._middlewaresDto?.push !== undefined) {
+      target._middlewaresDto.push({ toFunction: key, middleware: [DtoBase] });
+    } else {
+      target._middlewaresDto = [{ toFunction: key, middleware: [DtoBase] }];
+    }
+  };
+};
 
 export { ControllerBase, Controller };
