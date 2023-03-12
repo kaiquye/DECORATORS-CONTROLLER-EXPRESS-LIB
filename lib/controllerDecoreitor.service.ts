@@ -38,18 +38,19 @@ const Controller = (name?: string): Function => {
 };
 
 const Post = (name?: string): Function => {
+  const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
     const _value = target[key];
     if (target._routers?.push !== undefined) {
       target._routers.push({
         status: "post",
         toFunction: key,
-        name,
+        nameRouter,
         func: _value,
       });
     } else {
       target._routers = [
-        { status: "post", toFunction: key, name, func: _value },
+        { status: "post", toFunction: key, nameRouter, func: _value },
       ];
     }
   };
