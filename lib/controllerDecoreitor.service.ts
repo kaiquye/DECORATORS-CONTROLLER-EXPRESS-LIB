@@ -1,6 +1,6 @@
 import { Express } from "express";
 import { GlobalError } from "./globalError.error";
-import { DtoBase } from "./validationObjectTransfer.service";
+import { ValidationObject } from "./validationObjectTransfer.service";
 
 interface InterfaceControllerConfig {
   // instance of express
@@ -40,11 +40,22 @@ abstract class ControllerBase {
 }
 
 const Controller = (name?: string): Function => {
+  const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
     const _routersController = target.prototype._routers;
     const _dtosController = target.prototype._middlewaresDto;
-
-    console.log(_routersController, _dtosController);
+    for (const _routersControllerElement of _routersController) {
+      const dtoElement = _dtosController.find(
+        (dto) => dto.toFunction === _routersControllerElement.toFunction
+      );
+      globalConfig.instanceApp?.[_routersControllerElement.status](
+        _routersControllerElement.nameRouter,
+        dtoElement !== undefined
+          ? ValidationObject(dtoElement?.middleware[0], "BODY")
+          : nextFunction,
+        _routersControllerElement.callback
+      );
+    }
   };
 };
 
@@ -62,7 +73,7 @@ const Post = (name?: string): Function => {
         status: TypesMethodsRouter._post,
         toFunction: key,
         nameRouter,
-        func: _value,
+        callback: _value,
       });
       0;
     } else {
@@ -71,7 +82,7 @@ const Post = (name?: string): Function => {
           status: TypesMethodsRouter._post,
           toFunction: key,
           nameRouter,
-          func: _value,
+          callback: _value,
         },
       ];
     }
@@ -86,7 +97,7 @@ const Get = (name?: string): Function => {
         status: TypesMethodsRouter._get,
         toFunction: key,
         nameRouter,
-        func: _value,
+        callback: _value,
       });
     } else {
       target._routers = [
@@ -94,7 +105,7 @@ const Get = (name?: string): Function => {
           status: TypesMethodsRouter._get,
           toFunction: key,
           nameRouter,
-          func: _value,
+          callback: _value,
         },
       ];
     }
