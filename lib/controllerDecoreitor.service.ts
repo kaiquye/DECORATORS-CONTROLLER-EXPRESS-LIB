@@ -22,3 +22,8 @@ export const ControllerConfig = (instanceApp: Express): void => {
   }
   globalConfig.instanceApp = instanceApp;
 };
+
+export abstract class ControllerBase {
+  public _routers = [];
+  public _middlewaresDto = [];
+}
