@@ -7,6 +7,13 @@ interface InterfaceControllerConfig {
   globalError;
 }
 
+enum TypesMethodsRouter {
+  _post = "post",
+  _get = "get",
+  _patch = "patch",
+  _delete = "delete",
+}
+
 let globalConfig: InterfaceControllerConfig;
 
 /**
@@ -43,14 +50,19 @@ const Post = (name?: string): Function => {
     const _value = target[key];
     if (target._routers?.push !== undefined) {
       target._routers.push({
-        status: "post",
+        status: TypesMethodsRouter._post,
         toFunction: key,
         nameRouter,
         func: _value,
       });
     } else {
       target._routers = [
-        { status: "post", toFunction: key, nameRouter, func: _value },
+        {
+          status: TypesMethodsRouter._post,
+          toFunction: key,
+          nameRouter,
+          func: _value,
+        },
       ];
     }
   };
