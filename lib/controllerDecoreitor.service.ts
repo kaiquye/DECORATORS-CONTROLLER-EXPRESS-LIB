@@ -49,6 +49,11 @@ const Post = (name?: string): Function => {
   const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
     const _value = target[key];
+    if (_value) {
+      return globalConfig.globalError(
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+      );
+    }
     if (target._routers?.push !== undefined) {
       target._routers.push({
         status: TypesMethodsRouter._post,
@@ -92,14 +97,17 @@ const Get = (name?: string): Function => {
   };
 };
 
-const validateDto = (dto: DtoBase) => {
+const ValidateDto = (dto: DtoBase) => {
   return (target: ControllerBase, key: string): void => {
     if (target._middlewaresDto?.push !== undefined) {
-      target._middlewaresDto.push({ toFunction: key, middleware: [DtoBase] });
+      target._middlewaresDto.push({
+        toFunction: key,
+        dtoValidation: [DtoBase],
+      });
     } else {
-      target._middlewaresDto = [{ toFunction: key, middleware: [DtoBase] }];
+      target._middlewaresDto = [{ toFunction: key, dtoValidation: [DtoBase] }];
     }
   };
 };
 
-export { ControllerBase, Controller };
+export { ControllerBase, Controller, Post, Get, ValidateDto };
