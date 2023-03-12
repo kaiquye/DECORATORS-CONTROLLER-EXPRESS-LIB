@@ -3,6 +3,16 @@ import {
   ValidationObject,
   ControllerAdapter,
   IHttpResponse,
-  ControllerBase
 } from "./validationObjectTransfer.service";
-export  { DtoBase, ValidationObject, ControllerAdapter, IHttpResponse, ControllerBase };
+import { Controller, ControllerBase } from "./controllerDecoreitor.service";
+
+@Controller()
+export class Teste extends ControllerBase {}
+
+export {
+  DtoBase,
+  ValidationObject,
+  ControllerAdapter,
+  IHttpResponse,
+  ControllerBase,
+};

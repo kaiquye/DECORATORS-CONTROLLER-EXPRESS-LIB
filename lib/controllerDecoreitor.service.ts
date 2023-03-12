@@ -23,12 +23,12 @@ export const ControllerConfig = (instanceApp: Express): void => {
   globalConfig.instanceApp = instanceApp;
 };
 
-export abstract class ControllerBase {
+abstract class ControllerBase {
   public _routers = [];
   public _middlewaresDto = [];
 }
 
-export const Controller = (name?: string): Function => {
+const Controller = (name?: string): Function => {
   return (target: any, key: string): void => {
     const _routersController = target.prototype._routers;
     const _dtosController = target.prototype._middlewaresDto;
@@ -36,3 +36,23 @@ export const Controller = (name?: string): Function => {
     console.log(_routersController, _dtosController);
   };
 };
+
+const Post = (name?: string): Function => {
+  return (target: ControllerBase, key: string): void => {
+    const _value = target[key];
+    if (target._routers?.push !== undefined) {
+      target._routers.push({
+        status: "post",
+        toFunction: key,
+        name,
+        func: _value,
+      });
+    } else {
+      target._routers = [
+        { status: "post", toFunction: key, name, func: _value },
+      ];
+    }
+  };
+};
+
+export { ControllerBase, Controller };
