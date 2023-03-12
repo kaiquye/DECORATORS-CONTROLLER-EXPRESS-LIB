@@ -15,7 +15,10 @@ enum TypesMethodsRouter {
   _delete = "delete",
 }
 
-let globalConfig: InterfaceControllerConfig;
+let globalConfig: InterfaceControllerConfig = {
+  globalError: null,
+  instanceApp: null,
+};
 
 /**
  * @param instanceApp
@@ -49,7 +52,7 @@ const Post = (name?: string): Function => {
   const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
     const _value = target[key];
-    if (_value) {
+    if (!_value) {
       return globalConfig.globalError(
         "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
       );
@@ -61,6 +64,7 @@ const Post = (name?: string): Function => {
         nameRouter,
         func: _value,
       });
+      0;
     } else {
       target._routers = [
         {

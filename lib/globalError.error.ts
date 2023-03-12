@@ -6,7 +6,7 @@ class error extends Error {
 }
 
 export const GlobalError = (message?: string) => {
-  if (message) {
+  if (!message) {
     throw new error("unexpected error lib decorator controller");
   }
   throw new error(message);

@@ -7,9 +7,12 @@ import {
 import {
   Controller,
   ControllerBase,
+  ControllerConfig,
   Post,
 } from "./controllerDecoreitor.service";
 import { IsString } from "class-validator";
+
+ControllerConfig("" as any);
 
 @Controller()
 export class Teste extends ControllerBase {
