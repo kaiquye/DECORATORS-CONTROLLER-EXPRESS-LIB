@@ -9,13 +9,9 @@ Decorators-Controller-Express
 
 
 ### Install 
-decorators
+
 ```js
 npm i decorators-controller-express
-```
-class-validator
-```
-npm i class-validator
 ```
 
 
@@ -97,6 +93,11 @@ class UserController extends ControllerBase {
 ```  
 
 ### Validate request ``Body``
+
+class-validator
+```
+npm i class-validator
+```
 
 #### Create your dto
 your class must extend from the base ```DtoBase```
