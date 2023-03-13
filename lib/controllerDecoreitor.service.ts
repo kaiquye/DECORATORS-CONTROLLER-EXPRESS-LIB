@@ -43,7 +43,7 @@ abstract class ControllerBase {
   // all routers controller
   public _routers = [];
   public _globalMiddleware;
-  public _functionMiddleware = [];
+  public _functionMiddleware;
   // all body controller
   public _bodyValidators = [];
   public _paramValidators = [];
@@ -68,6 +68,7 @@ const Controller = (name: string): Function => {
     const _dtoParamController: [] = target.prototype._paramValidators as any;
     const _dtoQueryController: [] = target.prototype._queryValidators as any;
     const _globalMiddleware: [] = target.prototype._globalMiddleware as [];
+    const _functionMiddleware: [] = target.prototype._functionMiddleware as any;
     for (const _routersControllerElement of _routersController) {
       let _bodyValidators;
       if (_dtoBodyController) {
@@ -90,8 +91,19 @@ const Controller = (name: string): Function => {
             dtoQuery["toFunction"] === _routersControllerElement.toFunction
         );
       }
+      let _middlewares;
+      if (_functionMiddleware) {
+        _middlewares = _functionMiddleware.find(
+          (middleware) =>
+            middleware["toFunction"] === _routersControllerElement.toFunction
+        );
+      }
+      console.log(_middlewares);
       globalConfig.instanceApp
         .use(_globalMiddleware !== undefined ? _globalMiddleware : nextFunction)
+        .use(
+          _middlewares !== undefined ? _middlewares.middlewares : nextFunction
+        )
         ?.[_routersControllerElement.status](
           name + _routersControllerElement.nameRouter,
           _bodyValidators !== undefined
@@ -329,10 +341,25 @@ const ValidateQuery = (dto: any) => {
   };
 };
 
-const GlobalMiddleware = (middlewares: Function | []): Function => {
+const GlobalMiddleware = (middlewares: Function | any): Function => {
   return (target: any, key: string): void => {
-    console.log(middlewares);
     target.prototype._globalMiddleware = middlewares;
+  };
+};
+
+const Middleware = (middlewares: Function | any): Function => {
+  return (target: ControllerBase, key: string) => {
+    if (middlewares === undefined || middlewares.length === undefined) {
+      return globalConfig.globalError("invalid type middleware");
+    }
+    if (target._functionMiddleware?.push !== undefined) {
+      target._functionMiddleware.push({
+        toFunction: key,
+        middlewares,
+      });
+    } else {
+      target._functionMiddleware = [{ toFunction: key, middlewares }];
+    }
   };
 };
 
@@ -342,6 +369,7 @@ export {
   GlobalMiddleware,
   Post,
   Get,
+  Middleware,
   Patch,
   Delete,
   ValidateBody,

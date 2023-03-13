@@ -14,6 +14,7 @@ import {
   ValidateParam,
   ValidateQuery,
   GlobalMiddleware,
+  Middleware,
 } from "./controllerDecoreitor.service";
 
 import express from "express";
@@ -43,9 +44,10 @@ export class paramDto extends DtoBase {
   }
 }
 @Controller("/user")
-@GlobalMiddleware([(rq, rs, nx) => nx(), () => console.log("tested2")])
+@GlobalMiddleware([(rq, rs, nx) => nx()])
 class Test extends ControllerBase {
   @Post("")
+  @Middleware(() => console.log("middleware function"))
   testsw(req, res) {
     console.log("chegou aqui");
   }
