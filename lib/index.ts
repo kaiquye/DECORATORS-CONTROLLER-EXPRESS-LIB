@@ -14,17 +14,24 @@ import {
 } from "./controllerDecoreitor.service";
 
 import express from "express";
+import { IsString } from "class-validator";
 
 const server = express();
 
 ControllerConfig(server);
 
-export class userDto {
+export class userDto extends DtoBase {
+  @IsString()
   name: string;
+
+  constructor({ name }) {
+    super();
+    this.name = name;
+  }
 }
 @Controller()
 class Test extends ControllerBase {
-  @ValidateDto(userDto)
+  @ValidateBody(userDto)
   @Post("/tested")
   testsw(req, res) {
     res.send({});
@@ -32,14 +39,14 @@ class Test extends ControllerBase {
   }
 }
 
-server.listen(3001, () => console.log("runnig test"));
+server.listen(3002, () => console.log("runnig test"));
 
 export {
   Controller,
   ControllerConfig,
   Get,
   Post,
-  ValidateDto,
+  ValidateBody,
   DtoBase,
   ValidationObject,
   ControllerAdapter,
