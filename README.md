@@ -127,7 +127,7 @@ you must call the ``@ValidateBody()`` decorator and pass your DTO as a parameter
 import UserDto from "./dto/user-dto.ts";
 import { ControllerBase, Post, ValidateBody } from "decorators-controller-express";
 
-@Controller()
+@Controller("/v1/user")
 class UserController extends ControllerBase {
     
     @ValidateBody(UserDto)
