@@ -312,12 +312,12 @@ const ValidateQuery = (dto: any) => {
       );
     }
     if (target._queryValidators?.push !== undefined) {
-      target._paramValidators.push({
+      target._queryValidators.push({
         toFunction: key,
         dtoValidation: [dto],
       });
     } else {
-      target._paramValidators = [{ toFunction: key, dtoValidation: [dto] }];
+      target._queryValidators = [{ toFunction: key, dtoValidation: [dto] }];
     }
   };
 };

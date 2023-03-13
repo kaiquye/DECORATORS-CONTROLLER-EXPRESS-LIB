@@ -12,6 +12,7 @@ import {
   Post,
   ValidateBody,
   ValidateParam,
+  ValidateQuery,
 } from "./controllerDecoreitor.service";
 
 import express from "express";
@@ -42,9 +43,9 @@ export class paramDto extends DtoBase {
 }
 @Controller()
 class Test extends ControllerBase {
-  @ValidateParam(paramDto)
+  @ValidateQuery(paramDto)
   @ValidateBody(userDto)
-  @Post("/tested/:name")
+  @Post("/tested/")
   testsw(req, res) {
     console.log("chegou aqui");
     res.send(req.body);
