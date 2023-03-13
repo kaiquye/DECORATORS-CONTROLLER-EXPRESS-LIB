@@ -13,6 +13,7 @@ import {
   ValidateBody,
   ValidateParam,
   ValidateQuery,
+  GlobalMiddleware,
 } from "./controllerDecoreitor.service";
 
 import express from "express";
@@ -41,14 +42,20 @@ export class paramDto extends DtoBase {
     this.email = email;
   }
 }
-@Controller()
+@Controller("/user")
+@GlobalMiddleware([(rq, rs, nx) => nx(), () => console.log("tested2")])
 class Test extends ControllerBase {
-  @ValidateQuery(paramDto)
-  @ValidateBody(userDto)
-  @Post("/tested/")
+  @Post("")
   testsw(req, res) {
     console.log("chegou aqui");
-    res.send(req.body);
+  }
+}
+
+@Controller("/profile")
+class Test2 extends ControllerBase {
+  @Get()
+  testsw(req, res) {
+    console.log("chegou aqui");
   }
 }
 

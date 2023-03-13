@@ -42,6 +42,8 @@ const ApplyDecorators = {
 abstract class ControllerBase {
   // all routers controller
   public _routers = [];
+  public _globalMiddleware;
+  public _functionMiddleware = [];
   // all body controller
   public _bodyValidators = [];
   public _paramValidators = [];
@@ -58,13 +60,14 @@ abstract class ControllerBase {
  * export class UserController {}
  * ````
  */
-const Controller = (name?: string): Function => {
+const Controller = (name: string): Function => {
   const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
     const _routersController = target.prototype._routers;
     const _dtoBodyController: [] = target.prototype._bodyValidators as any;
     const _dtoParamController: [] = target.prototype._paramValidators as any;
     const _dtoQueryController: [] = target.prototype._queryValidators as any;
+    const _globalMiddleware: [] = target.prototype._globalMiddleware as [];
     for (const _routersControllerElement of _routersController) {
       let _bodyValidators;
       if (_dtoBodyController) {
@@ -87,19 +90,21 @@ const Controller = (name?: string): Function => {
             dtoQuery["toFunction"] === _routersControllerElement.toFunction
         );
       }
-      globalConfig.instanceApp?.[_routersControllerElement.status](
-        _routersControllerElement.nameRouter,
-        _bodyValidators !== undefined
-          ? ValidationObject(_bodyValidators?.dtoValidation[0], "BODY")
-          : nextFunction,
-        _paramValidators !== undefined
-          ? ValidationObject(_paramValidators?.dtoValidation[0], "PARAM")
-          : nextFunction,
-        _queryValidators !== undefined
-          ? ValidationObject(_queryValidators?.dtoValidation[0], "QUERY")
-          : nextFunction,
-        _routersControllerElement.callback
-      );
+      globalConfig.instanceApp
+        .use(_globalMiddleware !== undefined ? _globalMiddleware : nextFunction)
+        ?.[_routersControllerElement.status](
+          name + _routersControllerElement.nameRouter,
+          _bodyValidators !== undefined
+            ? ValidationObject(_bodyValidators?.dtoValidation[0], "BODY")
+            : nextFunction,
+          _paramValidators !== undefined
+            ? ValidationObject(_paramValidators?.dtoValidation[0], "PARAM")
+            : nextFunction,
+          _queryValidators !== undefined
+            ? ValidationObject(_queryValidators?.dtoValidation[0], "QUERY")
+            : nextFunction,
+          _routersControllerElement.callback
+        );
     }
   };
 };
@@ -324,9 +329,17 @@ const ValidateQuery = (dto: any) => {
   };
 };
 
+const GlobalMiddleware = (middlewares: Function | []): Function => {
+  return (target: any, key: string): void => {
+    console.log(middlewares);
+    target.prototype._globalMiddleware = middlewares;
+  };
+};
+
 export {
   ApplyDecorators,
   Controller,
+  GlobalMiddleware,
   Post,
   Get,
   Patch,

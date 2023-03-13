@@ -138,6 +138,7 @@ export function ControllerAdapter(controller: ControllerBase) {
 
       return res.status(result?.status || 200).json(result?.body);
     } catch (error) {
+      console.log(error);
       return res.status(500).json("error: internal, contact an administrator");
     }
   };
