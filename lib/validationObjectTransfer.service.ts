@@ -56,12 +56,10 @@ export function ValidationObject(classDto: any, path: IPathValidation) {
           error = await result.validate();
           break;
         case "PARAM":
-          console.log(req.params);
           result = new classDto({ ...req.params });
           error = await result.validate();
           break;
         case "QUERY":
-          console.log(req.query);
           result = new classDto({ ...req.query });
           error = await result.validate();
           break;
