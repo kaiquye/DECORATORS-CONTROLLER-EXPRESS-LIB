@@ -94,20 +94,19 @@ const Controller = (name: string): Function => {
         );
       }
       let _middlewares;
+      console.log(_functionMiddleware);
       if (_functionMiddleware) {
         _middlewares = _functionMiddleware.find(
           (middleware) =>
-            middleware["toFunction"] === _routersControllerElement.toFunction
+            middleware["toFunction"] ===
+            _routersControllerElement.toFunction + target.name
         );
       }
-      console.log(_middlewares);
       globalConfig.instanceApp
         .use(_globalMiddleware !== undefined ? _globalMiddleware : nextFunction)
-        .use(
-          _middlewares !== undefined ? _middlewares.middlewares : nextFunction
-        )
         ?.[_routersControllerElement.status](
           name + _routersControllerElement.nameRouter,
+          _middlewares !== undefined ? _middlewares.middlewares : nextFunction,
           _bodyValidators !== undefined
             ? ValidationObject(_bodyValidators?.dtoValidation[0], "BODY")
             : nextFunction,
@@ -379,18 +378,23 @@ const GlobalMiddleware = (middlewares: Function | any): Function => {
   };
 };
 
-const Middleware = (middlewares: Function | any): Function => {
+const Middleware = (
+  className: string,
+  middlewares: Function | any
+): Function => {
   return (target: ControllerBase, key: string) => {
     if (middlewares === undefined || middlewares.length === undefined) {
       return globalConfig.globalError("invalid type middleware");
     }
     if (target._functionMiddleware?.push !== undefined) {
       target._functionMiddleware.push({
-        toFunction: key,
+        toFunction: key + className,
         middlewares,
       });
     } else {
-      target._functionMiddleware = [{ toFunction: key, middlewares }];
+      target._functionMiddleware = [
+        { toFunction: key + className, middlewares },
+      ];
     }
   };
 };

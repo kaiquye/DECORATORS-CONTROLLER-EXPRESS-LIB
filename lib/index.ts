@@ -23,7 +23,7 @@ import { IsEmail, IsString } from "class-validator";
 const server = express();
 server.use(express.json());
 
-ApplyDecorators.toServer(server);
+ApplyDecorators.use(server);
 
 export class userDto extends DtoBase {
   @IsString()
@@ -46,20 +46,23 @@ export class paramDto extends DtoBase {
 @Controller("/user")
 @GlobalMiddleware([(rq, rs, nx) => nx()])
 class Test extends ControllerBase {
-  @Post("")
-  @Middleware(() => console.log("middleware function"))
+  @Middleware("Test", () => console.log("middleware function"))
+  @Post("/tested")
   testsw(req, res) {
-    console.log("chegou aqui");
+    console.log("chegou aqui1");
   }
 }
 
 @Controller("/profile")
 class Test2 extends ControllerBase {
-  @Get()
+  @Post("/tested")
   testsw(req, res) {
-    console.log("chegou aqui");
+    console.log("chegou aqui2");
   }
 }
+
+const te = new Test();
+console.log(te);
 
 server.listen(3002, () => console.log("runnig test"));
 
