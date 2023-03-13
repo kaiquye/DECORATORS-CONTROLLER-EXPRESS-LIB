@@ -50,7 +50,7 @@ class UserController extends ControllerBase {
 ```  
 
 
-### Middleware Controller
+### Add Middleware
 
 #### Global Middleware
 Use ``@GlobalMiddleware`` decorator to add middleware to your class
@@ -64,7 +64,6 @@ import { ControllerBase, Post, ValidateBody } from "decorators-controller-expres
 @Controller("/v1/user")
 @GlobalMiddleware([AuthMiddlewareExample])
 class UserController extends ControllerBase {
-    
     
     @Post("/login")
     login(req, res) {
