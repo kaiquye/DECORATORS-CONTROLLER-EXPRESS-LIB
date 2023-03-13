@@ -54,7 +54,7 @@ const Controller = (name?: string): Function => {
       globalConfig.instanceApp?.[_routersControllerElement.status](
         _routersControllerElement.nameRouter,
         dtoElement !== undefined
-          ? ValidationObject(dtoElement?.middleware[0], "BODY")
+          ? ValidationObject(dtoElement?.dtoValidation[0], "BODY")
           : nextFunction,
         _routersControllerElement.callback
       );
