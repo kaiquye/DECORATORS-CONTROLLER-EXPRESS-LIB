@@ -43,15 +43,18 @@ const Controller = (name?: string): Function => {
   const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
     const _routersController = target.prototype._routers;
-    const _dtosController = target.prototype._middlewaresDto;
+    const _dtosController: [] = target.prototype._middlewaresDto as any;
     for (const _routersControllerElement of _routersController) {
-      const dtoElement = _dtosController.find(
-        (dto) => dto.toFunction === _routersControllerElement.toFunction
-      );
+      let dtoElement;
+      if (_dtosController) {
+        dtoElement = _dtosController.find(
+          (dto) => dto["toFunction"] === _routersControllerElement.toFunction
+        );
+      }
       globalConfig.instanceApp?.[_routersControllerElement.status](
         _routersControllerElement.nameRouter,
         dtoElement !== undefined
-          ? ValidationObject(dtoElement?.middleware[0], "BODY")
+          ? ValidationObject(dtoElement?.dtoValidation[0], "BODY")
           : nextFunction,
         _routersControllerElement.callback
       );
