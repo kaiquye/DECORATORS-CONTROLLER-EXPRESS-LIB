@@ -4,43 +4,44 @@ import {
   ControllerAdapter,
   IHttpResponse,
 } from "./validationObjectTransfer.service";
+
 import {
   Controller,
-  ControllerBase,
-  Get,
+  GlobalMiddleware,
   Post,
+  Get,
+  Middleware,
+  Patch,
+  Delete,
   ValidateBody,
   ValidateParam,
   ValidateQuery,
-  GlobalMiddleware,
-  Middleware,
+  ControllerBase,
   controllers,
 } from "./controllerDecoreitor.service";
 
-import express, { Router } from "express";
-import { Test } from "./controllers";
-import { applyDecoratorsControllers } from "./adapters.service";
-
-const server = express();
-
-server.use(express.json());
-
-const app = applyDecoratorsControllers(server, [Test]);
-
-app.listen(3002, () => console.log("runnig test"));
+import {
+  applyDecoratorsControllers,
+  applyControllerDecorator,
+} from "./adapters.service";
 
 export {
-  Controller,
-  Get,
-  Post,
-  ValidateBody,
   DtoBase,
   ValidationObject,
   ControllerAdapter,
   IHttpResponse,
-  ControllerBase,
+  Controller,
+  GlobalMiddleware,
+  Post,
+  Get,
+  Middleware,
+  Patch,
+  Delete,
+  ValidateBody,
   ValidateParam,
   ValidateQuery,
-  GlobalMiddleware,
-  Middleware,
+  ControllerBase,
+  controllers,
+  applyDecoratorsControllers,
+  applyControllerDecorator,
 };
