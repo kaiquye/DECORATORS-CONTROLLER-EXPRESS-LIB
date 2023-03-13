@@ -1,13 +1,12 @@
 
-<p align="center" >
-Decorators-Controller-Express
-</p>
 
-<p align="center" >
-   <img width= 150 src='https://www.publicdomainpictures.net/pictures/340000/nahled/dog-silhouette-logo.png'/>
-</p>
+<img width= 150 src='https://www.publicdomainpictures.net/pictures/340000/nahled/dog-silhouette-logo.png'/>
 
+### Decorators-Controller-Express 
 
+#
+#### Author: https://github.com/kaiquye
+#
 ### Install 
 
 ```js
