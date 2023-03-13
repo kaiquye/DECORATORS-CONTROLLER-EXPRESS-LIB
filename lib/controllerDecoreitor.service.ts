@@ -34,6 +34,10 @@ export const ControllerConfig = (instanceApp: Express): void => {
   globalConfig.instanceApp = instanceApp;
 };
 
+
+/**
+ * @description: this server base to check if your control is valid.
+ */
 abstract class ControllerBase {
   public _routers = [];
   public _middlewaresDto = [];
