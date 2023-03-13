@@ -7,42 +7,62 @@ import {
 import {
   Controller,
   ControllerBase,
-  ControllerConfig,
+  ApplyDecorators,
   Get,
   Post,
   ValidateBody,
+  ValidateParam,
+  ValidateQuery,
 } from "./controllerDecoreitor.service";
 
 import express from "express";
+import { IsEmail, IsString } from "class-validator";
 
 const server = express();
+server.use(express.json());
 
-ControllerConfig(server);
+ApplyDecorators.toServer(server);
 
-export class userDto {
+export class userDto extends DtoBase {
+  @IsString()
   name: string;
-}
-@Controller()
-class Test extends ControllerBase {
-  @ValidateDto(userDto)
-  @Post("/tested")
-  testsw(req, res) {
-    res.send({});
-    console.log("tested");
+
+  constructor({ name }) {
+    super();
+    this.name = name;
   }
 }
 
-server.listen(3001, () => console.log("runnig test"));
+export class paramDto extends DtoBase {
+  @IsEmail()
+  email: string;
+  constructor({ email }) {
+    super();
+    this.email = email;
+  }
+}
+@Controller()
+class Test extends ControllerBase {
+  @ValidateQuery(paramDto)
+  @ValidateBody(userDto)
+  @Post("/tested/")
+  testsw(req, res) {
+    console.log("chegou aqui");
+    res.send(req.body);
+  }
+}
+
+server.listen(3002, () => console.log("runnig test"));
 
 export {
   Controller,
-  ControllerConfig,
   Get,
   Post,
-  ValidateDto,
+  ValidateBody,
   DtoBase,
   ValidationObject,
   ControllerAdapter,
+  ApplyDecorators,
   IHttpResponse,
   ControllerBase,
 };

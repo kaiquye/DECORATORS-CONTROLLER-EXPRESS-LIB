@@ -25,13 +25,15 @@ let globalConfig: InterfaceControllerConfig = {
  * @return {void}
  * @description: start before your routes and controller.
  */
-export const ControllerConfig = (instanceApp: Express): void => {
-  //centering error on an object
-  globalConfig.globalError = GlobalError;
-  if (instanceApp === undefined) {
-    globalConfig.globalError("instance express not found");
-  }
-  globalConfig.instanceApp = instanceApp;
+const ApplyDecorators = {
+  toServer: (instanceApp: Express) => {
+    //centering error on an object
+    globalConfig.globalError = GlobalError;
+    if (instanceApp === undefined) {
+      globalConfig.globalError("instance express not found");
+    }
+    globalConfig.instanceApp = instanceApp;
+  },
 };
 
 /**
@@ -42,7 +44,8 @@ abstract class ControllerBase {
   public _routers = [];
   // all body controller
   public _bodyValidators = [];
-  public _midd;
+  public _paramValidators = [];
+  public _queryValidators = [];
 }
 
 /**
@@ -59,18 +62,41 @@ const Controller = (name?: string): Function => {
   const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
     const _routersController = target.prototype._routers;
-    const _dtosController: [] = target.prototype._bodyValidators as any;
+    const _dtoBodyController: [] = target.prototype._bodyValidators as any;
+    const _dtoParamController: [] = target.prototype._paramValidators as any;
+    const _dtoQueryController: [] = target.prototype._queryValidators as any;
     for (const _routersControllerElement of _routersController) {
-      let dtoElement;
-      if (_dtosController) {
-        dtoElement = _dtosController.find(
-          (dto) => dto["toFunction"] === _routersControllerElement.toFunction
+      let _bodyValidators;
+      if (_dtoBodyController) {
+        _bodyValidators = _dtoBodyController.find(
+          (dtoBody) =>
+            dtoBody["toFunction"] === _routersControllerElement.toFunction
+        );
+      }
+      let _paramValidators;
+      if (_dtoParamController) {
+        _paramValidators = _dtoParamController.find(
+          (dtoParam) =>
+            dtoParam["toFunction"] === _routersControllerElement.toFunction
+        );
+      }
+      let _queryValidators;
+      if (_dtoQueryController) {
+        _queryValidators = _dtoQueryController.find(
+          (dtoQuery) =>
+            dtoQuery["toFunction"] === _routersControllerElement.toFunction
         );
       }
       globalConfig.instanceApp?.[_routersControllerElement.status](
         _routersControllerElement.nameRouter,
-        dtoElement !== undefined
-          ? ValidationObject(dtoElement?.dtoValidation[0], "BODY")
+        _bodyValidators !== undefined
+          ? ValidationObject(_bodyValidators?.dtoValidation[0], "BODY")
+          : nextFunction,
+        _paramValidators !== undefined
+          ? ValidationObject(_paramValidators?.dtoValidation[0], "PARAM")
+          : nextFunction,
+        _queryValidators !== undefined
+          ? ValidationObject(_queryValidators?.dtoValidation[0], "QUERY")
           : nextFunction,
         _routersControllerElement.callback
       );
@@ -268,15 +294,45 @@ const ValidateParam = (dto: any) => {
         "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
       );
     }
-    if (target._bodyValidators?.push !== undefined) {
-      target._bodyValidators.push({
+    if (target._paramValidators?.push !== undefined) {
+      target._paramValidators.push({
         toFunction: key,
         dtoValidation: [dto],
       });
     } else {
-      target._bodyValidators = [{ toFunction: key, dtoValidation: [dto] }];
+      target._paramValidators = [{ toFunction: key, dtoValidation: [dto] }];
     }
   };
 };
 
-export { ControllerBase, Controller, Post, Get, Patch, Delete, ValidateBody };
+const ValidateQuery = (dto: any) => {
+  return (target: ControllerBase, key: string): void => {
+    const _value = target[key];
+    if (!_value) {
+      return globalConfig.globalError(
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+      );
+    }
+    if (target._queryValidators?.push !== undefined) {
+      target._queryValidators.push({
+        toFunction: key,
+        dtoValidation: [dto],
+      });
+    } else {
+      target._queryValidators = [{ toFunction: key, dtoValidation: [dto] }];
+    }
+  };
+};
+
+export {
+  ApplyDecorators,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  ValidateBody,
+  ValidateParam,
+  ValidateQuery,
+  ControllerBase,
+};
