@@ -34,7 +34,6 @@ export const ControllerConfig = (instanceApp: Express): void => {
   globalConfig.instanceApp = instanceApp;
 };
 
-
 /**
  * @description: this server base to check if your control is valid.
  */
@@ -42,7 +41,8 @@ abstract class ControllerBase {
   // all routers controller
   public _routers = [];
   // all body controller
-  public _middlewaresDto = [];
+  public _bodyValidators = [];
+  public _midd;
 }
 
 /**
@@ -59,7 +59,7 @@ const Controller = (name?: string): Function => {
   const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
     const _routersController = target.prototype._routers;
-    const _dtosController: [] = target.prototype._middlewaresDto as any;
+    const _dtosController: [] = target.prototype._bodyValidators as any;
     for (const _routersControllerElement of _routersController) {
       let dtoElement;
       if (_dtosController) {
@@ -93,7 +93,7 @@ const Post = (name?: string): Function => {
     const _value = target[key];
     if (!_value) {
       return globalConfig.globalError(
-          "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
       );
     }
     if (target._routers?.push !== undefined) {
@@ -132,7 +132,7 @@ const Get = (name?: string): Function => {
     const _value = target[key];
     if (!_value) {
       return globalConfig.globalError(
-          "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
       );
     }
     if (target._routers?.push !== undefined) {
@@ -167,10 +167,10 @@ const Get = (name?: string): Function => {
 const Patch = (name?: string): Function => {
   const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
-    const _value = target[key];\
+    const _value = target[key];
     if (!_value) {
       return globalConfig.globalError(
-          "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
       );
     }
     if (target._routers?.push !== undefined) {
@@ -208,7 +208,7 @@ const Delete = (name?: string): Function => {
     const _value = target[key];
     if (!_value) {
       return globalConfig.globalError(
-          "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
       );
     }
     if (target._routers?.push !== undefined) {
@@ -243,19 +243,38 @@ const Delete = (name?: string): Function => {
  */
 const ValidateBody = (dto: any) => {
   return (target: ControllerBase, key: string): void => {
-    const _value = target[key]
+    const _value = target[key];
     if (!_value) {
       return globalConfig.globalError(
-          "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
       );
     }
-    if (target._middlewaresDto?.push !== undefined) {
-      target._middlewaresDto.push({
+    if (target._bodyValidators?.push !== undefined) {
+      target._bodyValidators.push({
         toFunction: key,
         dtoValidation: [dto],
       });
     } else {
-      target._middlewaresDto = [{ toFunction: key, dtoValidation: [dto] }];
+      target._bodyValidators = [{ toFunction: key, dtoValidation: [dto] }];
+    }
+  };
+};
+
+const ValidateParam = (dto: any) => {
+  return (target: ControllerBase, key: string): void => {
+    const _value = target[key];
+    if (!_value) {
+      return globalConfig.globalError(
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+      );
+    }
+    if (target._bodyValidators?.push !== undefined) {
+      target._bodyValidators.push({
+        toFunction: key,
+        dtoValidation: [dto],
+      });
+    } else {
+      target._bodyValidators = [{ toFunction: key, dtoValidation: [dto] }];
     }
   };
 };

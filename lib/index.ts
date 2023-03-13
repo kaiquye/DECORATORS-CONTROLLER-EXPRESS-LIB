@@ -10,7 +10,7 @@ import {
   ControllerConfig,
   Get,
   Post,
-  ValidateDto,
+  ValidateBody,
 } from "./controllerDecoreitor.service";
 
 import express from "express";
