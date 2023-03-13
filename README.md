@@ -39,7 +39,7 @@ your class must extend from the ```ControllerBase```
 import UserDto from "./dto/user-dto.ts";
 import { ControllerBase, Post, ValidateBody } from "decorators-controller-express";
 
-@Controller()
+@Controller("/v1/user")
 class UserController extends ControllerBase {
     
     @Post("/login")
@@ -61,7 +61,7 @@ your class must extend from the ```ControllerBase```
 import UserDto from "./dto/user-dto.ts";
 import { ControllerBase, Post, ValidateBody } from "decorators-controller-express";
 
-@Controller()
+@Controller("/v1/user")
 @GlobalMiddleware([AuthMiddlewareExample])
 class UserController extends ControllerBase {
     
@@ -81,7 +81,7 @@ Use ``@Middleware`` decorator to add middleware to your route
 import UserDto from "./dto/user-dto.ts";
 import { ControllerBase, Post, ValidateBody } from "decorators-controller-express";
 
-@Controller()
+@Controller("/v1/user")
 class UserController extends ControllerBase {
     
     @Middleware(VerifyStoreMiddlewareExample)
@@ -167,7 +167,7 @@ you must call the ``@ValidateParam()`` decorator and pass your DTO as a paramete
 import UserDto from "./dto/user-dto.ts";
 import { ControllerBase, Post, ValidateBody } from "decorators-controller-express";
 
-@Controller()
+@Controller("/v1/user")
 class UserController extends ControllerBase {
     
     @ValidateParam(UserDto)
@@ -207,7 +207,7 @@ you must call the ``@ValidateQuery()`` decorator and pass your DTO as a paramete
 import UserDto from "./dto/user-dto.ts";
 import { ControllerBase, Post, ValidateBody } from "decorators-controller-express";
 
-@Controller()
+@Controller("/v1/user")
 class UserController extends ControllerBase {
     
     @ValidateQuery(UserDto)
