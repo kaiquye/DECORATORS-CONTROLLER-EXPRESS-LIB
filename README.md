@@ -12,7 +12,7 @@
 
 #
 #### Author: https://github.com/kaiquye
-#### Npm: https://www.npmjs.com/package/decorators-controller-express
+#### Npm: https://www.npmjs.com/package/validation-dto-lib
 #
 ### Install 
 
