@@ -29,7 +29,7 @@ import { UserController } from "./src/modules/controller";
 const server = express();
 server.use(express.json())
 
-const app = applyDecoratorsControllers(server, [UserController, otherControllers]);
+const app = applyDecoratorsControllers(server, [UserController, ProfileController, ...others]);
 
 app.listen(3000, console.log("Bomb Has Been Planted..."))
 ```
