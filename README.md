@@ -1,7 +1,12 @@
 
 #
 #
-<img width= 200 src='https://www.publicdomainpictures.net/pictures/340000/nahled/dog-silhouette-logo.png'/>
+<p align="center" >
+   <img width= 250 src='https://www.publicdomainpictures.net/pictures/340000/nahled/dog-silhouette-logo.png'/>
+</p>
+
+#
+#
 
 ### Decorators-Controller-Express 
 
