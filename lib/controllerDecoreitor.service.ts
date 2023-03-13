@@ -26,7 +26,8 @@ let globalConfig: InterfaceControllerConfig = {
  * @description: start before your routes and controller.
  */
 const ApplyDecorators = {
-  toServer: (instanceApp: Express) => {
+  // instance of your express server
+  use: (instanceApp: Express) => {
     //centering error on an object
     globalConfig.globalError = GlobalError;
     if (instanceApp === undefined) {
@@ -63,6 +64,7 @@ abstract class ControllerBase {
 const Controller = (name: string): Function => {
   const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
+    // prototypes
     const _routersController = target.prototype._routers;
     const _dtoBodyController: [] = target.prototype._bodyValidators as any;
     const _dtoParamController: [] = target.prototype._paramValidators as any;
@@ -303,6 +305,16 @@ const ValidateBody = (dto: any) => {
   };
 };
 
+/**
+ * @param name
+ * @constructor
+ * @example
+ * ```ts
+ * @ValidateParam(UserParamDto)
+ * @Get("/:user_id")
+ * profile(req, res) {}
+ * ````
+ */
 const ValidateParam = (dto: any) => {
   return (target: ControllerBase, key: string): void => {
     const _value = target[key];
@@ -322,6 +334,16 @@ const ValidateParam = (dto: any) => {
   };
 };
 
+/**
+ * @param dto
+ * @constructor
+ * @example
+ * ```ts
+ * @ValidateQuery(UserQueryDto)
+ * @Get("/")
+ * profile(req, res) {}
+ * ````
+ */
 const ValidateQuery = (dto: any) => {
   return (target: ControllerBase, key: string): void => {
     const _value = target[key];
@@ -341,6 +363,16 @@ const ValidateQuery = (dto: any) => {
   };
 };
 
+/**
+ * @param middlewares
+ * @constructor
+ * @example
+ * ```ts
+ * @Controller("/v1/user/")
+ * @GlobalMiddleware(AuthUser)
+ * class UserController(req, res) {}
+ * ````
+ */
 const GlobalMiddleware = (middlewares: Function | any): Function => {
   return (target: any, key: string): void => {
     target.prototype._globalMiddleware = middlewares;
