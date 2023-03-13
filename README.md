@@ -132,6 +132,7 @@ import { ControllerBase, Post, ValidateBody } from "decorators-controller-expres
 class UserController extends ControllerBase {
     
     @ValidateBody(UserDto)
+    @ValidateParam(searchDto)
     @Post("/login")
     login(req, res) {
         res.send(req.body);
@@ -141,23 +142,6 @@ class UserController extends ControllerBase {
 
 ### Validate request ``Params``
 
-#### Create your dto
-your class must extend from the base ```DtoBase```
-
-```ts
-// DTO BODY
-import { IsString } from "class-validator";
-import { DtoBase } from "decorators-controller-express";
-export class UserDto extends DtoBase {
-    @IsString()
-    user_id: string;
-    
-    constructor({ user_id }) {
-        super();
-        this.user_id = user_id;
-    }
-}
-```
 #### Create your Controller
 you must call the ``@ValidateParam()`` decorator and pass your DTO as a parameter
 
@@ -181,23 +165,6 @@ class UserController extends ControllerBase {
 
 ### Validate request ``Query``
 
-#### Create your dto
-your class must extend from the base ```DtoBase```
-
-```ts
-// DTO BODY
-import { IsString } from "class-validator";
-import { DtoBase } from "decorators-controller-express";
-export class UserDto extends DtoBase {
-    @IsString()
-    search: string;
-    
-    constructor({ search }) {
-        super();
-        this.search = search;
-    }
-}
-```
 #### Create your Controller
 you must call the ``@ValidateQuery()`` decorator and pass your DTO as a parameter
 
