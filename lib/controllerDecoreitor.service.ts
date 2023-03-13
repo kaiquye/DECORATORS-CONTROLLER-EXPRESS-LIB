@@ -292,7 +292,7 @@ const ValidateParam = (dto: any) => {
         "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
       );
     }
-    if (target._bodyValidators?.push !== undefined) {
+    if (target._paramValidators?.push !== undefined) {
       target._paramValidators.push({
         toFunction: key,
         dtoValidation: [dto],
@@ -303,4 +303,33 @@ const ValidateParam = (dto: any) => {
   };
 };
 
-export { ControllerBase, Controller, Post, Get, Patch, Delete, ValidateBody };
+const ValidateQuery = (dto: any) => {
+  return (target: ControllerBase, key: string): void => {
+    const _value = target[key];
+    if (!_value) {
+      return globalConfig.globalError(
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+      );
+    }
+    if (target._queryValidators?.push !== undefined) {
+      target._paramValidators.push({
+        toFunction: key,
+        dtoValidation: [dto],
+      });
+    } else {
+      target._paramValidators = [{ toFunction: key, dtoValidation: [dto] }];
+    }
+  };
+};
+
+export {
+  ControllerBase,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  ValidateBody,
+  ValidateParam,
+  ValidateQuery,
+};

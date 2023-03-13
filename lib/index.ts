@@ -11,12 +11,14 @@ import {
   Get,
   Post,
   ValidateBody,
+  ValidateParam,
 } from "./controllerDecoreitor.service";
 
 import express from "express";
-import { IsString } from "class-validator";
+import { IsEmail, IsString } from "class-validator";
 
 const server = express();
+server.use(express.json());
 
 ControllerConfig(server);
 
@@ -29,13 +31,23 @@ export class userDto extends DtoBase {
     this.name = name;
   }
 }
+
+export class paramDto extends DtoBase {
+  @IsEmail()
+  email: string;
+  constructor({ email }) {
+    super();
+    this.email = email;
+  }
+}
 @Controller()
 class Test extends ControllerBase {
+  @ValidateParam(paramDto)
   @ValidateBody(userDto)
-  @Post("/tested")
+  @Post("/tested/:name")
   testsw(req, res) {
-    res.send({});
-    console.log("tested");
+    console.log("chegou aqui");
+    res.send(req.body);
   }
 }
 

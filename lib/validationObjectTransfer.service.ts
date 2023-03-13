@@ -11,8 +11,7 @@ export abstract class DtoBase {
   }
 }
 
-type IPathValidation = "BODY" | "PARAM" | "QUERY" ;
-
+type IPathValidation = "BODY" | "PARAM" | "QUERY";
 
 /**
  * * @author Kaic Mendes <https://github.com/kaiquye>
@@ -42,7 +41,11 @@ type IPathValidation = "BODY" | "PARAM" | "QUERY" ;
  */
 
 export function ValidationObject(classDto: any, path: IPathValidation) {
-  return async function (req: Request, res: Response, next: NextFunction): Promise<Response | void>{
+  return async function (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
     try {
       let result;
       let error;
@@ -50,7 +53,6 @@ export function ValidationObject(classDto: any, path: IPathValidation) {
       switch (path) {
         case "BODY":
           result = new classDto({ ...req.body });
-          result.name;
           error = await result.validate();
           break;
         case "PARAM":
@@ -124,7 +126,7 @@ export type ControllerBase = (
 export function ControllerAdapter(controller: ControllerBase) {
   return async function (req: Request, res: Response) {
     const body = req?.body;
-    const params = {params: req?.params, query: req?.query}
+    const params = { params: req?.params, query: req?.query };
 
     try {
       const result = await controller(body, params);
