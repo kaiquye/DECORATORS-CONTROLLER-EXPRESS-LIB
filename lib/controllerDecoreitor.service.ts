@@ -53,6 +53,7 @@ abstract class ControllerBase {
  * ```ts
  * @Controller("/v1/user")
  * export class UserController {}
+ * ````
  */
 const Controller = (name?: string): Function => {
   const nextFunction = (req, res, next) => next();
@@ -77,6 +78,15 @@ const Controller = (name?: string): Function => {
   };
 };
 
+/**
+ * @param name
+ * @constructor
+ * @example
+ * ```ts
+ * @Post("/login")
+ * login(req, res) {}
+ * ````
+ */
 const Post = (name?: string): Function => {
   const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
@@ -106,6 +116,16 @@ const Post = (name?: string): Function => {
     }
   };
 };
+
+/**
+ * @param name
+ * @constructor
+ * @example
+ * ```ts
+ * @Get("/find")
+ * find(req, res) {}
+ * ````
+ */
 const Get = (name?: string): Function => {
   const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
@@ -135,6 +155,15 @@ const Get = (name?: string): Function => {
   };
 };
 
+/**
+ * @param name
+ * @constructor
+ * @example
+ * ```ts
+ * @Patch("/profile")
+ * profile(req, res) {}
+ * ````
+ */
 const Patch = (name?: string): Function => {
   const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
@@ -164,6 +193,15 @@ const Patch = (name?: string): Function => {
   };
 };
 
+/**
+ * @param name
+ * @constructor
+ * @example
+ * ```ts
+ * @Delete("/profile")
+ * profile(req, res) {}
+ * ````
+ */
 const Delete = (name?: string): Function => {
   const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
@@ -193,6 +231,16 @@ const Delete = (name?: string): Function => {
   };
 };
 
+/**
+ * @param name
+ * @constructor
+ * @example
+ * ```ts
+ * @ValidateBody(UserDto)
+ * @Post()
+ * profile(req, res) {}
+ * ````
+ */
 const ValidateBody = (dto: any) => {
   return (target: ControllerBase, key: string): void => {
     const _value = target[key]
