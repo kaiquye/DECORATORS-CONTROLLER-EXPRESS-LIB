@@ -1,13 +1,19 @@
 
+#
+#
 <p align="center" >
-Decorators-Controller-Express
+   <img width= 250 src='https://www.publicdomainpictures.net/pictures/340000/nahled/dog-silhouette-logo.png'/>
 </p>
 
-<p align="center" >
-   <img width= 150 src='https://www.publicdomainpictures.net/pictures/340000/nahled/dog-silhouette-logo.png'/>
-</p>
+#
+#
 
+### Decorators-Controller-Express-Lib
 
+#
+#### Author: https://github.com/kaiquye
+#### Npm: https://www.npmjs.com/package/decorators-controller-express
+#
 ### Install 
 
 ```js
@@ -50,7 +56,7 @@ class UserController extends ControllerBase {
 ```  
 
 
-### Middleware Controller
+### Add Middleware
 
 #### Global Middleware
 Use ``@GlobalMiddleware`` decorator to add middleware to your class
@@ -64,7 +70,6 @@ import { ControllerBase, Post, ValidateBody } from "decorators-controller-expres
 @Controller("/v1/user")
 @GlobalMiddleware([AuthMiddlewareExample])
 class UserController extends ControllerBase {
-    
     
     @Post("/login")
     login(req, res) {
@@ -132,6 +137,7 @@ import { ControllerBase, Post, ValidateBody } from "decorators-controller-expres
 class UserController extends ControllerBase {
     
     @ValidateBody(UserDto)
+    @ValidateParam(searchDto)
     @Post("/login")
     login(req, res) {
         res.send(req.body);
@@ -141,23 +147,6 @@ class UserController extends ControllerBase {
 
 ### Validate request ``Params``
 
-#### Create your dto
-your class must extend from the base ```DtoBase```
-
-```ts
-// DTO BODY
-import { IsString } from "class-validator";
-import { DtoBase } from "decorators-controller-express";
-export class UserDto extends DtoBase {
-    @IsString()
-    user_id: string;
-    
-    constructor({ user_id }) {
-        super();
-        this.user_id = user_id;
-    }
-}
-```
 #### Create your Controller
 you must call the ``@ValidateParam()`` decorator and pass your DTO as a parameter
 
@@ -181,23 +170,6 @@ class UserController extends ControllerBase {
 
 ### Validate request ``Query``
 
-#### Create your dto
-your class must extend from the base ```DtoBase```
-
-```ts
-// DTO BODY
-import { IsString } from "class-validator";
-import { DtoBase } from "decorators-controller-express";
-export class UserDto extends DtoBase {
-    @IsString()
-    search: string;
-    
-    constructor({ search }) {
-        super();
-        this.search = search;
-    }
-}
-```
 #### Create your Controller
 you must call the ``@ValidateQuery()`` decorator and pass your DTO as a parameter
 
