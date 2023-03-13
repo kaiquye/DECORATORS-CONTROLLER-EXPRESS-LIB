@@ -25,13 +25,15 @@ let globalConfig: InterfaceControllerConfig = {
  * @return {void}
  * @description: start before your routes and controller.
  */
-export const ControllerConfig = (instanceApp: Express): void => {
-  //centering error on an object
-  globalConfig.globalError = GlobalError;
-  if (instanceApp === undefined) {
-    globalConfig.globalError("instance express not found");
-  }
-  globalConfig.instanceApp = instanceApp;
+const ApplyDecorators = {
+  toServer: (instanceApp: Express) => {
+    //centering error on an object
+    globalConfig.globalError = GlobalError;
+    if (instanceApp === undefined) {
+      globalConfig.globalError("instance express not found");
+    }
+    globalConfig.instanceApp = instanceApp;
+  },
 };
 
 /**
@@ -323,7 +325,7 @@ const ValidateQuery = (dto: any) => {
 };
 
 export {
-  ControllerBase,
+  ApplyDecorators,
   Controller,
   Post,
   Get,
@@ -332,4 +334,5 @@ export {
   ValidateBody,
   ValidateParam,
   ValidateQuery,
+  ControllerBase,
 };

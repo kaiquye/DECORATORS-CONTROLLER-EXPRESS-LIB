@@ -7,7 +7,7 @@ import {
 import {
   Controller,
   ControllerBase,
-  ControllerConfig,
+  ApplyDecorators,
   Get,
   Post,
   ValidateBody,
@@ -21,7 +21,7 @@ import { IsEmail, IsString } from "class-validator";
 const server = express();
 server.use(express.json());
 
-ControllerConfig(server);
+ApplyDecorators.toServer(server);
 
 export class userDto extends DtoBase {
   @IsString()
@@ -56,13 +56,13 @@ server.listen(3002, () => console.log("runnig test"));
 
 export {
   Controller,
-  ControllerConfig,
   Get,
   Post,
   ValidateBody,
   DtoBase,
   ValidationObject,
   ControllerAdapter,
+  ApplyDecorators,
   IHttpResponse,
   ControllerBase,
 };
