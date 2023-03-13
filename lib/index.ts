@@ -7,7 +7,6 @@ import {
 import {
   Controller,
   ControllerBase,
-  ApplyDecorators,
   Get,
   Post,
   ValidateBody,
@@ -15,56 +14,20 @@ import {
   ValidateQuery,
   GlobalMiddleware,
   Middleware,
+  controllers,
 } from "./controllerDecoreitor.service";
 
-import express from "express";
-import { IsEmail, IsString } from "class-validator";
+import express, { Router } from "express";
+import { Test } from "./controllers";
+import { applyDecoratorsControllers } from "./adapters.service";
 
 const server = express();
+
 server.use(express.json());
 
-ApplyDecorators.use(server);
+const app = applyDecoratorsControllers(server, [Test]);
 
-export class userDto extends DtoBase {
-  @IsString()
-  name: string;
-
-  constructor({ name }) {
-    super();
-    this.name = name;
-  }
-}
-
-export class paramDto extends DtoBase {
-  @IsEmail()
-  email: string;
-  constructor({ email }) {
-    super();
-    this.email = email;
-  }
-}
-@Controller("/user")
-@GlobalMiddleware([(rq, rs, nx) => nx()])
-class Test extends ControllerBase {
-  @Middleware("Test", () => console.log("middleware function"))
-  @Post("/tested")
-  testsw(req, res) {
-    console.log("chegou aqui1");
-  }
-}
-
-@Controller("/profile")
-class Test2 extends ControllerBase {
-  @Post("/tested")
-  testsw(req, res) {
-    console.log("chegou aqui2");
-  }
-}
-
-const te = new Test();
-console.log(te);
-
-server.listen(3002, () => console.log("runnig test"));
+app.listen(3002, () => console.log("runnig test"));
 
 export {
   Controller,
@@ -74,7 +37,10 @@ export {
   DtoBase,
   ValidationObject,
   ControllerAdapter,
-  ApplyDecorators,
   IHttpResponse,
   ControllerBase,
+  ValidateParam,
+  ValidateQuery,
+  GlobalMiddleware,
+  Middleware,
 };

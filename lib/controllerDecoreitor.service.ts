@@ -1,11 +1,12 @@
-import { Express } from "express";
+import { Express, Router } from "express";
 import { GlobalError } from "./globalError.error";
 import { ValidationObject } from "./validationObjectTransfer.service";
 
 interface InterfaceControllerConfig {
   // instance of express
-  instanceApp: Express;
+  instanceApp: Router;
   globalError;
+  controllers;
 }
 
 enum TypesMethodsRouter {
@@ -18,6 +19,7 @@ enum TypesMethodsRouter {
 let globalConfig: InterfaceControllerConfig = {
   globalError: null,
   instanceApp: null,
+  controllers: null,
 };
 
 /**
@@ -25,22 +27,18 @@ let globalConfig: InterfaceControllerConfig = {
  * @return {void}
  * @description: start before your routes and controller.
  */
-const ApplyDecorators = {
-  // instance of your express server
-  use: (instanceApp: Express) => {
-    //centering error on an object
-    globalConfig.globalError = GlobalError;
-    if (instanceApp === undefined) {
-      globalConfig.globalError("instance express not found");
-    }
-    globalConfig.instanceApp = instanceApp;
-  },
+//centering error on an object
+globalConfig.globalError = GlobalError;
+globalConfig.instanceApp = Router();
+const controllers = (controllers) => {
+  return (globalConfig.controllers = controllers);
 };
 
 /**
  * @description: this server base to check if your control is valid.
  */
 abstract class ControllerBase {
+  public _router: Router = Router();
   // all routers controller
   public _routers = [];
   public _globalMiddleware;
@@ -65,6 +63,7 @@ const Controller = (name: string): Function => {
   const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
     // prototypes
+    target.prototype._router = Router();
     const _routersController = target.prototype._routers;
     const _dtoBodyController: [] = target.prototype._bodyValidators as any;
     const _dtoParamController: [] = target.prototype._paramValidators as any;
@@ -94,7 +93,6 @@ const Controller = (name: string): Function => {
         );
       }
       let _middlewares;
-      console.log(_functionMiddleware);
       if (_functionMiddleware) {
         _middlewares = _functionMiddleware.find(
           (middleware) =>
@@ -102,7 +100,7 @@ const Controller = (name: string): Function => {
             _routersControllerElement.toFunction + target.name
         );
       }
-      globalConfig.instanceApp
+      target.prototype._router
         .use(_globalMiddleware !== undefined ? _globalMiddleware : nextFunction)
         ?.[_routersControllerElement.status](
           name + _routersControllerElement.nameRouter,
@@ -400,7 +398,6 @@ const Middleware = (
 };
 
 export {
-  ApplyDecorators,
   Controller,
   GlobalMiddleware,
   Post,
@@ -412,4 +409,5 @@ export {
   ValidateParam,
   ValidateQuery,
   ControllerBase,
+  controllers,
 };
