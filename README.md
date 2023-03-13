@@ -9,8 +9,13 @@ Decorators-Controller-Express
 
 
 ### Install 
+decorators
 ```js
 npm i decorators-controller-express
+```
+class-validator
+```
+npm i class-validator
 ```
 
 
@@ -22,7 +27,10 @@ Start express
 import express from "express";
 
 const app = express();
-ApplyDecorators.toServer(server);
+
+ApplyDecorators.toServer(app);
+
+app.listen(3000, console.log("start project."))
 ```
 
 #### Create your dto
@@ -31,6 +39,7 @@ ApplyDecorators.toServer(server);
 ```ts
 // DTO BODY
 import { IsEmail, IsString } from "class-validator";
+import { DtoBase } from "decorators-controller-express";
 
 export class UserDto extends DtoBase {
     @IsEmail()
@@ -62,7 +71,7 @@ class UserController extends ControllerBase {
     }
 
     @ValidateParam(findUserDto)
-    @Get("/find/user_id")
+    @Get("/find/:user_id")
     findUserById(req, res) {
         res.send(req.body);
     }

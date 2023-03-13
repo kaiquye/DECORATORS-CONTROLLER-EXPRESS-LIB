@@ -42,6 +42,8 @@ const ApplyDecorators = {
 abstract class ControllerBase {
   // all routers controller
   public _routers = [];
+  public _globalMiddleware;
+  public _functionMiddleware;
   // all body controller
   public _bodyValidators = [];
   public _paramValidators = [];
@@ -58,13 +60,15 @@ abstract class ControllerBase {
  * export class UserController {}
  * ````
  */
-const Controller = (name?: string): Function => {
+const Controller = (name: string): Function => {
   const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
     const _routersController = target.prototype._routers;
     const _dtoBodyController: [] = target.prototype._bodyValidators as any;
     const _dtoParamController: [] = target.prototype._paramValidators as any;
     const _dtoQueryController: [] = target.prototype._queryValidators as any;
+    const _globalMiddleware: [] = target.prototype._globalMiddleware as [];
+    const _functionMiddleware: [] = target.prototype._functionMiddleware as any;
     for (const _routersControllerElement of _routersController) {
       let _bodyValidators;
       if (_dtoBodyController) {
@@ -87,19 +91,32 @@ const Controller = (name?: string): Function => {
             dtoQuery["toFunction"] === _routersControllerElement.toFunction
         );
       }
-      globalConfig.instanceApp?.[_routersControllerElement.status](
-        _routersControllerElement.nameRouter,
-        _bodyValidators !== undefined
-          ? ValidationObject(_bodyValidators?.dtoValidation[0], "BODY")
-          : nextFunction,
-        _paramValidators !== undefined
-          ? ValidationObject(_paramValidators?.dtoValidation[0], "PARAM")
-          : nextFunction,
-        _queryValidators !== undefined
-          ? ValidationObject(_queryValidators?.dtoValidation[0], "QUERY")
-          : nextFunction,
-        _routersControllerElement.callback
-      );
+      let _middlewares;
+      if (_functionMiddleware) {
+        _middlewares = _functionMiddleware.find(
+          (middleware) =>
+            middleware["toFunction"] === _routersControllerElement.toFunction
+        );
+      }
+      console.log(_middlewares);
+      globalConfig.instanceApp
+        .use(_globalMiddleware !== undefined ? _globalMiddleware : nextFunction)
+        .use(
+          _middlewares !== undefined ? _middlewares.middlewares : nextFunction
+        )
+        ?.[_routersControllerElement.status](
+          name + _routersControllerElement.nameRouter,
+          _bodyValidators !== undefined
+            ? ValidationObject(_bodyValidators?.dtoValidation[0], "BODY")
+            : nextFunction,
+          _paramValidators !== undefined
+            ? ValidationObject(_paramValidators?.dtoValidation[0], "PARAM")
+            : nextFunction,
+          _queryValidators !== undefined
+            ? ValidationObject(_queryValidators?.dtoValidation[0], "QUERY")
+            : nextFunction,
+          _routersControllerElement.callback
+        );
     }
   };
 };
@@ -324,11 +341,35 @@ const ValidateQuery = (dto: any) => {
   };
 };
 
+const GlobalMiddleware = (middlewares: Function | any): Function => {
+  return (target: any, key: string): void => {
+    target.prototype._globalMiddleware = middlewares;
+  };
+};
+
+const Middleware = (middlewares: Function | any): Function => {
+  return (target: ControllerBase, key: string) => {
+    if (middlewares === undefined || middlewares.length === undefined) {
+      return globalConfig.globalError("invalid type middleware");
+    }
+    if (target._functionMiddleware?.push !== undefined) {
+      target._functionMiddleware.push({
+        toFunction: key,
+        middlewares,
+      });
+    } else {
+      target._functionMiddleware = [{ toFunction: key, middlewares }];
+    }
+  };
+};
+
 export {
   ApplyDecorators,
   Controller,
+  GlobalMiddleware,
   Post,
   Get,
+  Middleware,
   Patch,
   Delete,
   ValidateBody,
