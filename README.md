@@ -9,13 +9,9 @@ Decorators-Controller-Express
 
 
 ### Install 
-decorators
+
 ```js
 npm i decorators-controller-express
-```
-class-validator
-```
-npm i class-validator
 ```
 
 
@@ -29,7 +25,7 @@ import { UserController } from "./src/modules/controller";
 const server = express();
 server.use(express.json())
 
-const app = applyDecoratorsControllers(server, [UserController, otherControllers]);
+const app = applyDecoratorsControllers(server, [UserController, ProfileController, ...others]);
 
 app.listen(3000, console.log("Bomb Has Been Planted..."))
 ```
@@ -98,6 +94,11 @@ class UserController extends ControllerBase {
 
 ### Validate request ``Body``
 
+class-validator
+```
+npm i class-validator
+```
+
 #### Create your dto
 your class must extend from the base ```DtoBase```
 
@@ -127,7 +128,7 @@ you must call the ``@ValidateBody()`` decorator and pass your DTO as a parameter
 import UserDto from "./dto/user-dto.ts";
 import { ControllerBase, Post, ValidateBody } from "decorators-controller-express";
 
-@Controller()
+@Controller("/v1/user")
 class UserController extends ControllerBase {
     
     @ValidateBody(UserDto)
