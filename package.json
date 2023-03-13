@@ -1,6 +1,6 @@
 {
   "name": "decorators-controller-express",
-  "version": "1.0.5",
+  "version": "1.0.9",
   "description": "I created quick and simple controllers with decorations.",
   "main": "dist/index.js",
   "scripts": {
