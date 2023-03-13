@@ -45,6 +45,15 @@ abstract class ControllerBase {
   public _middlewaresDto = [];
 }
 
+/**
+ * @param name main name of your route
+ * @constructor
+ * @return function
+ * @example
+ * ```ts
+ * @Controller("/v1/user")
+ * export class UserController {}
+ */
 const Controller = (name?: string): Function => {
   const nextFunction = (req, res, next) => next();
   return (target: any, key: string): void => {
