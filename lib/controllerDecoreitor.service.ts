@@ -14,6 +14,7 @@ enum TypesMethodsRouter {
   _get = "get",
   _patch = "patch",
   _delete = "delete",
+  _put = "put",
 }
 
 let globalConfig: InterfaceControllerConfig = {
@@ -264,6 +265,35 @@ const Delete = (name?: string): Function => {
       target._routers = [
         {
           status: TypesMethodsRouter._delete,
+          toFunction: key,
+          nameRouter,
+          callback: _value,
+        },
+      ];
+    }
+  };
+};
+
+const Put = (name?: string): Function => {
+  const nameRouter = name === undefined ? "/" : name;
+  return (target: ControllerBase, key: string): void => {
+    const _value = target[key];
+    if (!_value) {
+      return globalConfig.globalError(
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+      );
+    }
+    if (target._routers?.push !== undefined) {
+      target._routers.push({
+        status: TypesMethodsRouter._put,
+        toFunction: key,
+        nameRouter,
+        callback: _value,
+      });
+    } else {
+      target._routers = [
+        {
+          status: TypesMethodsRouter._put,
           toFunction: key,
           nameRouter,
           callback: _value,
