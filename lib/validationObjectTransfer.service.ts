@@ -129,7 +129,7 @@ export function ControllerAdapter(controller: ControllerBase) {
     const params = { params: req?.params, query: req?.query };
 
     try {
-      const result = await controller(body, params);
+      const result = await controller(req, res);
       const cookies = result.cookies;
 
       if (cookies) {
