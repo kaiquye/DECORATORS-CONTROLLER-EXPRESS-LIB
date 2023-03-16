@@ -1,6 +1,9 @@
 import { Express, Router } from "express";
 import { GlobalError } from "./globalError.error";
-import { ValidationObject } from "./validationObjectTransfer.service";
+import {
+  ControllerAdapter,
+  ValidationObject,
+} from "./validationObjectTransfer.service";
 
 interface InterfaceControllerConfig {
   // instance of express
@@ -14,6 +17,7 @@ enum TypesMethodsRouter {
   _get = "get",
   _patch = "patch",
   _delete = "delete",
+  _put = "put",
 }
 
 let globalConfig: InterfaceControllerConfig = {
@@ -114,7 +118,7 @@ const Controller = (name: string): Function => {
           _queryValidators !== undefined
             ? ValidationObject(_queryValidators?.dtoValidation[0], "QUERY")
             : nextFunction,
-          _routersControllerElement.callback
+          ControllerAdapter(_routersControllerElement.callback)
         );
     }
   };
@@ -278,6 +282,44 @@ const Delete = (name?: string): Function => {
  * @constructor
  * @example
  * ```ts
+ * @Put("/profile")
+ * profile(req, res) {}
+ * ````
+ */
+const Put = (name?: string): Function => {
+  const nameRouter = name === undefined ? "/" : name;
+  return (target: ControllerBase, key: string): void => {
+    const _value = target[key];
+    if (!_value) {
+      return globalConfig.globalError(
+        "decorator is not on top of a certain function, please check that you have not placed the POST method on top of a valid function"
+      );
+    }
+    if (target._routers?.push !== undefined) {
+      target._routers.push({
+        status: TypesMethodsRouter._put,
+        toFunction: key,
+        nameRouter,
+        callback: _value,
+      });
+    } else {
+      target._routers = [
+        {
+          status: TypesMethodsRouter._put,
+          toFunction: key,
+          nameRouter,
+          callback: _value,
+        },
+      ];
+    }
+  };
+};
+
+/**
+ * @param name
+ * @constructor
+ * @example
+ * ```ts
  * @ValidateBody(UserDto)
  * @Post()
  * profile(req, res) {}
@@ -402,6 +444,7 @@ export {
   GlobalMiddleware,
   Post,
   Get,
+  Put,
   Middleware,
   Patch,
   Delete,

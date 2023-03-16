@@ -129,16 +129,15 @@ export function ControllerAdapter(controller: ControllerBase) {
     const params = { params: req?.params, query: req?.query };
 
     try {
-      const result = await controller(body, params);
+      const result = await controller(req, res);
       const cookies = result.cookies;
 
       if (cookies) {
         res.cookie(cookies.name, cookies.value, { httpOnly: true });
       }
 
-      return res.status(result?.status || 200).json(result?.body);
+      return result;
     } catch (error) {
-      console.log(error);
       return res.status(500).json("error: internal, contact an administrator");
     }
   };
