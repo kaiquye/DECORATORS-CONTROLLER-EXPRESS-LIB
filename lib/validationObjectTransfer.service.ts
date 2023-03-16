@@ -136,7 +136,7 @@ export function ControllerAdapter(controller: ControllerBase) {
         res.cookie(cookies.name, cookies.value, { httpOnly: true });
       }
 
-      return res.status(result?.status || 200).json(result?.body);
+      return result;
     } catch (error) {
       console.log(error);
       return res.status(500).json("error: internal, contact an administrator");

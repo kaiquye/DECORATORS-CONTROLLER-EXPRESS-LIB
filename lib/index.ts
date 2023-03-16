@@ -4,12 +4,13 @@ import {
   ControllerAdapter,
   IHttpResponse,
 } from "./validationObjectTransfer.service";
-
+import express from "express";
 import {
   Controller,
   GlobalMiddleware,
   Post,
   Get,
+  Put,
   Middleware,
   Patch,
   Delete,
@@ -24,6 +25,12 @@ import {
   applyDecoratorsControllers,
   applyControllerDecorator,
 } from "./adapters.service";
+import { ControllerTest } from "./controller-test";
+const app = express();
+
+app.use(express.json());
+applyDecoratorsControllers(app, [ControllerTest]);
+app.listen(3000, () => console.log("runnig"));
 
 export {
   DtoBase,

@@ -1,6 +1,9 @@
 import { Express, Router } from "express";
 import { GlobalError } from "./globalError.error";
-import { ValidationObject } from "./validationObjectTransfer.service";
+import {
+  ControllerAdapter,
+  ValidationObject,
+} from "./validationObjectTransfer.service";
 
 interface InterfaceControllerConfig {
   // instance of express
@@ -115,7 +118,7 @@ const Controller = (name: string): Function => {
           _queryValidators !== undefined
             ? ValidationObject(_queryValidators?.dtoValidation[0], "QUERY")
             : nextFunction,
-          _routersControllerElement.callback
+          ControllerAdapter(_routersControllerElement.callback)
         );
     }
   };
@@ -274,6 +277,15 @@ const Delete = (name?: string): Function => {
   };
 };
 
+/**
+ * @param name
+ * @constructor
+ * @example
+ * ```ts
+ * @Put("/profile")
+ * profile(req, res) {}
+ * ````
+ */
 const Put = (name?: string): Function => {
   const nameRouter = name === undefined ? "/" : name;
   return (target: ControllerBase, key: string): void => {
@@ -432,6 +444,7 @@ export {
   GlobalMiddleware,
   Post,
   Get,
+  Put,
   Middleware,
   Patch,
   Delete,
